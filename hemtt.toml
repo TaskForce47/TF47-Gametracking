@@ -1,0 +1,9 @@
+name = "TF47_Backend"
+prefix = "TF47"
+author = "TF47 Dragon"
+folder_optionals = false
+files = [
+    "mod.cpp",
+    "LICENSE",
+    "README.md"
+]
