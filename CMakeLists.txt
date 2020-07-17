@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.6)
 #----Make changes here
 
 #This is your project name. And also the filename of the resulting plugin.
-project (tf47_backend)
+project (tf47-gametracking)
 
 #This setting enables the use of the engine string type instead of converting to std::string.
 #Enabling this results in better performance when handling strings to SQF commands.
@@ -15,7 +15,7 @@ option(USE_64BIT_BUILD "USE_64BIT_BUILD" OFF)
 set(INTERCEPT_LINK_TYPE "static")
 
 if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-    set( USE_64BIT_BUILD ON)
+	set( USE_64BIT_BUILD ON)
 endif()
 
 message("GENERATOR USED: '${CMAKE_GENERATOR}'")
@@ -37,5 +37,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+
+add_subdirectory(mysql-connector-cpp)
+include_directories(AFTER "${PROJECT_SOURCE_DIR}/nanodbc")
 
 add_subdirectory(src)

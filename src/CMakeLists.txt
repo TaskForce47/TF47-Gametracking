@@ -12,12 +12,8 @@ SOURCE_GROUP("src" FILES ${INTERCEPT_PLUGIN_SOURCES})
 #file(GLOB INTERCEPT_plugin_utilities_SOURCES "utilities/*.cpp" "utilities/*.hpp" "utilities/*.h")
 #SOURCE_GROUP("src/utilities" FILES ${INTERCEPT_plugin_utilities_SOURCES})
 
-# CPR
-find_package(cpr CONFIG REQUIRED)
+#----Don't change anything below this line
 
-# Boost
-set(Boost_USE_STATIC_LIBS ON)
-FIND_PACKAGE(Boost 1.69 COMPONENTS program_options REQUIRED)
 
 #include the Intercept headers from the submodule
 set(INTERCEPT_CLIENT_PATH "${CMAKE_SOURCE_DIR}/intercept/src/client")
@@ -25,8 +21,10 @@ set(INTERCEPT_CLIENT_PATH "${CMAKE_SOURCE_DIR}/intercept/src/client")
 set(INTERCEPT_INCLUDE_PATH "${INTERCEPT_CLIENT_PATH}/headers" "${INTERCEPT_CLIENT_PATH}/headers/shared" "${INTERCEPT_CLIENT_PATH}/headers/client/" "${INTERCEPT_CLIENT_PATH}/headers/client/sqf")
 
 if(USE_64BIT_BUILD)
+    set(INTERCEPT_PLUGIN_NAME "${CMAKE_PROJECT_NAME}_x64" PARENT_SCOPE)
     set(INTERCEPT_PLUGIN_NAME "${CMAKE_PROJECT_NAME}_x64")
 else()
+    set(INTERCEPT_PLUGIN_NAME "${CMAKE_PROJECT_NAME}" PARENT_SCOPE)
     set(INTERCEPT_PLUGIN_NAME "${CMAKE_PROJECT_NAME}")
 endif()
 
@@ -42,29 +40,16 @@ SOURCE_GROUP("intercept" FILES ${INTERCEPT_HOST_SOURCES})
 add_library( ${INTERCEPT_PLUGIN_NAME} SHARED ${INTERCEPT_PLUGIN_SOURCES} ${INTERCEPT_HOST_SOURCES})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${INTERCEPT_INCLUDE_PATH})
-include_directories(${Boost_INCLUDE_DIR})
 
 set_target_properties(${INTERCEPT_PLUGIN_NAME} PROPERTIES PREFIX "")
 set_target_properties(${INTERCEPT_PLUGIN_NAME} PROPERTIES FOLDER "${CMAKE_PROJECT_NAME}")
 
-target_link_libraries(${INTERCEPT_PLUGIN_NAME} nlohmann_json nlohmann_json::nlohmann_json)
-target_link_libraries(${INTERCEPT_PLUGIN_NAME} cpr)
-
-if(MSVC)
-    target_link_libraries(${INTERCEPT_PLUGIN_NAME} CRYPT32.LIB)
-endif()
-
-target_link_libraries(${INTERCEPT_PLUGIN_NAME} ${Boost_LIBRARIES})
-
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++1z -O2 -s -fPIC -fpermissive -static-libgcc -static-libstdc++ -Wno-attributes")#-march=i686 -m32
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-    set(CMAKE_SHARED_LINKER_FLAGS "-shared -static-libgcc -static-libstdc++")
+	set(CMAKE_CXX_FLAGS "-std=c++1z -O2 -s -fPIC -fpermissive -static-libgcc -static-libstdc++")#-march=i686 -m32
+	set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+	set(CMAKE_SHARED_LINKER_FLAGS "-shared -static-libgcc -static-libstdc++")
 else()
-    set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1 /MP /EHsc")
-    set(CMAKE_CXX_FLAGS_RELEASE "/MT /Zi /O2 /Ob1 /EHsc /MP") #with debug info
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT") # LIBCMT conflicts with POCO
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:REF /DEBUG:FULL") 
+	set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1 /MP /EHsc")
+	set(CMAKE_CXX_FLAGS_RELEASE "/MT /Zi /O2 /Ob1 /EHsc /MP") #with debug info
+	set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:REF /DEBUG:FULL") 
 endif()
-
-install(TARGETS ${INTERCEPT_PLUGIN_NAME} RUNTIME DESTINATION bin)
