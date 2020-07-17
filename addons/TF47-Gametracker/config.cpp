@@ -1,12 +1,12 @@
 class CfgPatches {
-    class grad_replay_intercept {
-        name = "TF47 Backend";
+    class tf47_gametracker {
+        name = "TF47-Gametracker";
         units[] = {};
         weapons[] = {};
         requiredVersion = 1.82;
         requiredAddons[] = {"intercept_core"};
-        author = "Dragon";
-        authors[] = {"Dragon"};
+        author = "TF47";
+        authors[] = {"Dragon", "RednecksRevenge"};
         url = "https://taskforce47.com";
         version = "1.0";
         versionStr = "1.0";
@@ -14,9 +14,9 @@ class CfgPatches {
     };
 };
 class Intercept {
-    class Dragon {
-        class tf47_backend {
-            pluginName = "tf47_backend";
+    class TF47 {
+        class tf47_gametracker {
+            pluginName = "TF47-Gametracker";
         };
     };
 };
